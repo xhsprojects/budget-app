@@ -3,8 +3,14 @@ import { Moon, Sun, Edit, Trash, Calendar } from 'lucide-react';
 import './App.css';
 
 const App = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [budgets, setBudgets] = useState([]);
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem('darkMode');
+    return savedMode ? JSON.parse(savedMode) : false;
+  });
+  const [budgets, setBudgets] = useState(() => {
+    const savedBudgets = localStorage.getItem('budgets');
+    return savedBudgets ? JSON.parse(savedBudgets) : [];
+  });
   const [newBudgetName, setNewBudgetName] = useState('');
   const [newBudgetAmount, setNewBudgetAmount] = useState('');
   const [selectedBudget, setSelectedBudget] = useState(null);
@@ -18,7 +24,12 @@ const App = () => {
 
   useEffect(() => {
     document.body.className = darkMode ? 'dark-mode' : 'light-mode';
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
   }, [darkMode]);
+
+  useEffect(() => {
+    localStorage.setItem('budgets', JSON.stringify(budgets));
+  }, [budgets]);
 
   const addBudget = () => {
     if (newBudgetName && newBudgetAmount) {
@@ -259,21 +270,14 @@ const App = () => {
                       </>
                     )}
                   </tr>
-                  
                 ))}
               </tbody>
             </table>
           </div>
-          
         )}
       </main>
     </div>
-    
   );
- 
-
 };
-
-
 
 export default App;
